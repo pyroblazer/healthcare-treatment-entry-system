@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { treatmentService } from '../services/treatmentService';
 import { Treatment } from '../types/treatment';
-import { Box, Heading, Text, Spinner, VStack, Alert } from '@chakra-ui/react';
+import { Box, Heading, Text, Spinner, VStack, Alert, Input, Button } from '@chakra-ui/react';
+import { toast } from 'react-toastify';
 
 const TreatmentList: React.FC = () => {
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>('');
 
-  const fetchTreatments = async () => {
+  const fetchTreatments = async (searchTerm: string = '') => {
     try {
-      const data = await treatmentService.listTreatments();
+      const params = searchTerm ? { filter: searchTerm } : {};
+      const data = await treatmentService.listTreatments(params);
       console.log("data", data);
       setTreatments(data.treatments);
     } catch (err) {
@@ -20,6 +23,16 @@ const TreatmentList: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const handleFilter = (e: { preventDefault: () => void; target: { value: React.SetStateAction<string>; }; }) => {
+    e.preventDefault();
+
+    setFilter(e.target.value)
+  }
+
+  const handleSearch = () => {
+    fetchTreatments(filter);
+  }
 
   useEffect(() => {
     fetchTreatments();
@@ -48,6 +61,14 @@ const TreatmentList: React.FC = () => {
       <Heading as="h2" mb={4}>
         Treatment List
       </Heading>
+      <Input 
+        name="filter"
+        value={filter}
+        onChange={handleFilter}
+      />
+      <Button onClick={handleSearch}>
+        Search
+      </Button>
       <VStack align="stretch">
         {treatments.map((treatment) => (
           <Box key={treatment.id} p={4} borderWidth="1px" borderRadius="md">

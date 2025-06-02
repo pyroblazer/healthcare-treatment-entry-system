@@ -28,13 +28,18 @@ export class TreatmentService {
     return treatment;
   }
 
-  async listTreatments(page?: number, limit?: number) {
+  async listTreatments(page?: number, limit?: number, filter?: string) {
     if (page && limit) {
       const skip = (page - 1) * limit;
       const treatments = await this.prisma.treatment.findMany({
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
+        where: {
+          patientName: {
+            contains: filter,
+          },
+        },
       });
       const total = await this.prisma.treatment.count();
       return {
@@ -45,6 +50,11 @@ export class TreatmentService {
     } else {
       const treatments = await this.prisma.treatment.findMany({
         orderBy: { createdAt: 'desc' },
+        where: {
+          patientName: {
+            contains: filter,
+          },
+        },
       });
       return {
         treatments,

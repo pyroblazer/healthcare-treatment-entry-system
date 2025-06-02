@@ -7,7 +7,7 @@ export const treatmentService = {
     return response.data;
   },
 
-  async listTreatments(page = 1, limit = 10): Promise<{
+  async listTreatments({page = 1, limit = 10, filter = ''}): Promise<{
     treatments: Treatment[];
     totalPages: number;
     currentPage: number;
@@ -17,7 +17,7 @@ export const treatmentService = {
       totalPages: number;
       currentPage: number;
     }>('/treatments', {
-      params: { page, limit },
+      params: { page, limit, filter },
     });
     return response.data;
   },

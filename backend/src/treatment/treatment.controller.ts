@@ -28,11 +28,16 @@ export class TreatmentController {
   async listTreatments(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('filter') filter?: string,
   ) {
     const pageNumber = page ? parseInt(page, 10) : undefined;
     const limitNumber = limit ? parseInt(limit, 10) : undefined;
 
-    return await this.treatmentService.listTreatments(pageNumber, limitNumber);
+    return await this.treatmentService.listTreatments(
+      pageNumber,
+      limitNumber,
+      filter,
+    );
   }
 
   @Get(':id')
